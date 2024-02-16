@@ -316,3 +316,40 @@ $kubectl apply -f dev-crb.yaml
 $ kubectl get clusterrolebinding --sort-by=.metadata.creationTimestamp | grep dev-crb
   dev-crb
 ```
+
+## TESTING
+Finally we can do some simple test such as run some commands to check if the user "adam” can get the list of pods, deployments and services as adam.
+
+```txt
+$ kubectl auth can-i get pod --context adam
+  yes
+
+$ kubectl auth can-i get deploy --context adam
+  yes
+
+$ kubectl auth can-i get svc --context adam
+  no
+
+$ kubectl get svc --context adam
+  Error from server (Forbidden): services is forbidden: User "adam" cannot list resource "services" in API group "" in the namespace "default"
+
+$ kubectl get pod --context adam
+  NAME                     READY   STATUS    RESTARTS      AGE
+  nginx-6dd64cbf6b-fwgzh   1/1     Running   1 (10m ago)   19h
+
+$ kubectl get deploy --context adam
+  NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+  nginx   1/1     1            1           19h
+  devops@msi:~/DevOps/10_Authorization$ 
+```
+
+# SUMMARY
+In the context of Kubernetes cluster authorization, the Cluster Role, Cluster Role Binding, and Certificate Signing Request (CSR) are important components.
+
+1. Cluster Role: A Cluster Role is a set of permissions that define what actions can be performed within a Kubernetes cluster. It is used to grant access to specific resources and operations. Cluster Roles are defined at the cluster level and can be assigned to users, groups, or service accounts.
+
+2. Cluster Role Binding: Cluster Role Binding is used to bind a Cluster Role to a user, group, or service account. It establishes the relationship between a Cluster Role and the entity that should have those permissions. By creating a Cluster Role Binding, you can grant specific permissions to users or groups within the cluster.
+
+3. Certificate Signing Request (CSR): A Certificate Signing Request is a request made by a user or service account to obtain a digital certificate from a certificate authority (CA). In the context of Kubernetes cluster authorization, a CSR is used to request a certificate that can be used for authentication and authorization purposes. The certificate is then used to verify the identity of the user or service account when accessing the cluster.
+
+Overall, these components play a crucial role in managing and controlling access to resources within a Kubernetes cluster. They help define the permissions and roles assigned to users, groups, or service accounts, and ensure secure authentication and authorization mechanisms are in place.
